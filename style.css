@@ -101,9 +101,8 @@ nav {
 .logo-img {
     height: 50px;
     width: auto;
-    border-radius: 50%;
+    border-radius: 5%;
     object-fit: cover;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition: var(--transition);
 }
 
@@ -125,7 +124,7 @@ nav {
 
 .nav-links {
     display: flex;
-    gap: 30px;
+    gap: 50px;
 }
 
 .nav-links a {
@@ -148,7 +147,7 @@ nav {
 #home {
     height: 100vh;
     /* You can replace this URL with your own image */
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('background.jpg');
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('ok.jpg');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -361,7 +360,7 @@ footer {
         align-items: center;
         overflow: hidden;
         transition: height 0.3s ease;
-        gap: 0;
+        gap: 15px;
     }
 
     .nav-links.active {
