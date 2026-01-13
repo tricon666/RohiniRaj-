@@ -43,7 +43,6 @@ if (bookingForm) {
         });
 
         if (!isValid) {
-            // Scroll to first error
             const firstError = bookingForm.querySelector('.has-error');
             if (firstError) {
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -52,32 +51,52 @@ if (bookingForm) {
             return;
         }
 
-        // Get form data
+        // 1. Change the button text to show it's processing
+        const submitBtn = bookingForm.querySelector('.btn-submit');
+        const originalBtnText = submitBtn.innerText;
+        submitBtn.innerText = 'Sending...';
+        submitBtn.disabled = true;
+
+        // 2. Prepare the data
         const formData = new FormData(bookingForm);
-        const fullName = formData.get('fullName');
-        const vehicleType = formData.get('vehicleType');
-        const passengers = formData.get('passengers');
-        const bookingDate = formData.get('bookingDate');
+        
+        // PASTE YOUR GOOGLE SCRIPT URL HERE
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzvAcGTdviFd43pejLeKlFgfI4ZZmE99r9CSLghcXhHVivVmgZGAU6HtJmkvJG4eUB59g/exec'; 
 
-        // Show success message
-        const successMessage = document.getElementById('successMessage');
-        if (successMessage) {
-            successMessage.hidden = false;
-            successMessage.textContent = `✓Thank you ${fullName}! Your enquiry for ${vehicleType} (${passengers} passengers) on ${formatDate(bookingDate)} has been received. We'll contact you within 2 hour.`;
-            successMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        // 3. Send data to Google Sheets
+        fetch(scriptURL, { method: 'POST', body: formData })
+            .then(response => {
+                // Success Handling
+                const fullName = formData.get('fullName');
+                const vehicleType = formData.get('vehicleType');
+                const passengers = formData.get('passengers');
+                const bookingDate = formData.get('bookingDate');
 
-        // In production, send data to backend:
-        // fetch('/api/booking', { method: 'POST', body: formData })
-        //   .then(response => response.json())
-        //   .then(data => { /* handle response */ })
+                const successMessage = document.getElementById('successMessage');
+                if (successMessage) {
+                    successMessage.hidden = false;
+                    successMessage.textContent = `✓ Thank you ${fullName}! Your enquiry for ${vehicleType} (${passengers} passengers) on ${formatDate(bookingDate)} has been received. We'll contact you within 2 hours.`;
+                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
 
-        // Reset form after 2 seconds
-        setTimeout(() => {
-            bookingForm.reset();
-            inputs.forEach(input => input.classList.remove('has-error'));
-            successMessage.hidden = true;
-        }, 2000);
+                // Reset form
+                bookingForm.reset();
+                inputs.forEach(input => input.classList.remove('has-error'));
+                
+                // Hide message after 5 seconds
+                setTimeout(() => {
+                    successMessage.hidden = true;
+                }, 5000);
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert("There was a problem submitting your form. Please try again or call us directly.");
+            })
+            .finally(() => {
+                // Reset button
+                submitBtn.innerText = originalBtnText;
+                submitBtn.disabled = false;
+            });
     });
 }
 
