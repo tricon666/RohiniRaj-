@@ -61,7 +61,7 @@ if (bookingForm) {
         const formData = new FormData(bookingForm);
         
         // PASTE YOUR GOOGLE SCRIPT URL HERE
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzvAcGTdviFd43pejLeKlFgfI4ZZmE99r9CSLghcXhHVivVmgZGAU6HtJmkvJG4eUB59g/exec'; 
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxH3I3Eal5HzzrKsE3zBR7ieaUIv1Qb63BhG-OE9OG_lWUynGgaCcFXRDe_E4EMpNzO-Q/exec' ; 
 
         // 3. Send data to Google Sheets
         fetch(scriptURL, { method: 'POST', body: formData })
@@ -75,8 +75,8 @@ if (bookingForm) {
                 const successMessage = document.getElementById('successMessage');
                 if (successMessage) {
                     successMessage.hidden = false;
-                    successMessage.textContent = `✓ Thank you ${fullName}! Your enquiry for ${vehicleType} (${passengers} passengers) on ${formatDate(bookingDate)} has been received. We'll contact you within 2 hours.`;
-                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    successMessage.textContent = `✓ Thank you ${fullName}! Your enquiry for ${vehicleType} (${passengers} passengers) on ${formatDate(bookingDate)} has been received. We'll contact you within 0-2 hours.`;
+                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'start'});
                 }
 
                 // Reset form
@@ -167,3 +167,46 @@ function formatDate(dateString) {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-IN', options);
 }
+
+
+
+// ========== VIDEO POPUP HANDLING ==========
+const videoCards = document.querySelectorAll('.video-card');
+const videoModal = document.getElementById('videoModal');
+const modalVideo = document.getElementById('modalVideo');
+const closeModal = document.querySelector('.close-modal');
+
+videoCards.forEach(card => {
+    card.addEventListener('click', () => {
+        const videoSrc = card.getAttribute('data-video');
+        const sourceTag = modalVideo.querySelector('source');
+        sourceTag.src = videoSrc;
+        sourceTag.type = 'video/mp4';
+        
+        // Load and play the video
+        modalVideo.load();
+        videoModal.style.display = 'block';
+        
+        // Add small delay to ensure video is loaded before playing
+        setTimeout(() => {
+            modalVideo.play().catch(error => {
+                console.log('Video playback error:', error);
+            });
+        }, 100);
+    });
+});
+
+closeModal.addEventListener('click', () => {
+    videoModal.style.display = 'none';
+    modalVideo.pause();
+    modalVideo.currentTime = 0;
+});
+
+// Close modal when clicking outside the video
+window.addEventListener('click', (e) => {
+    if (e.target === videoModal) {
+        videoModal.style.display = 'none';
+        modalVideo.pause();
+        modalVideo.currentTime = 0;
+    }
+});

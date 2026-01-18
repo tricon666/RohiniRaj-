@@ -147,7 +147,7 @@ nav {
 #home {
     height: 100vh;
     /* You can replace this URL with your own image */
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('ok.jpg');
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('background.jpg');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -628,8 +628,8 @@ textarea.form-control {
 
 .success-message {
      
-    background: #e6ffef;
-    border: 2px solid #00a86b;
+    background: #ffffff;
+    
     color: #064b33;
     padding: 14px 16px;
     border-radius: 8px;
@@ -800,4 +800,93 @@ textarea.form-control {
         padding: 12px;
         font-size: 0.95rem;
     }
+}
+
+
+/* Video Grid Layout */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.video-card {
+    cursor: pointer;
+    background: var(--white);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.video-card:hover {
+    transform: translateY(-5px);
+}
+
+.video-thumbnail {
+    position: relative;
+    height: 200px;
+}
+
+.video-thumbnail img {
+    height: 100%;
+    object-fit: cover;
+}
+
+.play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--primary-color);
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+.video-card h3 {
+    padding: 15px;
+    text-align: center;
+}
+
+/* Video Modal Styling */
+.video-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+}
+
+.modal-content {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 80%;
+    max-width: 800px;
+    margin: auto;
+}
+
+.modal-content video {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.close-modal {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
 }
