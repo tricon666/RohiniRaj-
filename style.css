@@ -46,7 +46,7 @@ img { width: 100%; height: auto; display: block; }
 }
 
 .section-title h2 {
-    font-size: 2.5rem;
+    font-size: 1.9rem;
     color: var(--secondary-color);
     margin-bottom: 10px;
 }
@@ -383,7 +383,7 @@ footer {
     }
 
     .nav-links.active {
-        height: 300px;
+        height: 350px;
     }
 
     .nav-links a {
