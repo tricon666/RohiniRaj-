@@ -210,3 +210,146 @@ window.addEventListener('click', (e) => {
         modalVideo.currentTime = 0;
     }
 });
+
+
+
+
+// ========== TOUR SPECIFIC FORM HANDLING ==========
+
+// 1. Function to scroll to form and fill package name
+function scrollToTourForm(packageName) {
+    const formContainer = document.getElementById('tourFormContainer');
+    const displayInput = document.getElementById('displayPackageName');
+    const hiddenInput = document.getElementById('selectedTourPackage');
+
+    if (formContainer && displayInput && hiddenInput) {
+        // Scroll to the form
+        formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Fill the inputs
+        displayInput.value = packageName; // Shows to user
+        hiddenInput.value = packageName;  // Sends to Google Sheet
+        
+        // Add a highlight effect
+        displayInput.style.borderColor = '#0698c5';
+        setTimeout(() => displayInput.style.borderColor = '#ddd', 2000);
+    }
+}
+
+// 2. Handle Tour Form Submission
+const tourForm = document.getElementById('tourBookingForm');
+
+if (tourForm) {
+    tourForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Basic Validation
+        if (!tourForm.checkValidity()) {
+            tourForm.reportValidity();
+            return;
+        }
+
+        const submitBtn = tourForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = 'Processing Request...';
+        submitBtn.disabled = true;
+
+        const formData = new FormData(tourForm);
+        
+        // SAME GOOGLE SCRIPT URL (It works because we mapped inputs correctly)
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxH3I3Eal5HzzrKsE3zBR7ieaUIv1Qb63BhG-OE9OG_lWUynGgaCcFXRDe_E4EMpNzO-Q/exec';
+
+        fetch(scriptURL, { method: 'POST', body: formData })
+            .then(response => {
+                const successMsg = document.getElementById('tourSuccessMsg');
+                successMsg.hidden = false;
+                successMsg.textContent = `✓ Enquiry sent for ${formData.get('vehicleType')}! We will contact you soon.`;
+                successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                tourForm.reset();
+                document.getElementById('displayPackageName').value = "Select a package above";
+                
+                setTimeout(() => { successMsg.hidden = true; }, 5000);
+            })
+            .catch(error => {
+                alert("Error! Please contact us on WhatsApp.");
+                console.error('Error!', error.message);
+            })
+            .finally(() => {
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
+            });
+    });
+}
+
+
+// ========== TOUR POPUP FUNCTIONALITY ==========
+const tourPopup = document.getElementById('tourPopup');
+const popupForm = document.getElementById('tourPopupForm');
+
+// 1. Open Popup & Set Tour Name
+function openTourPopup(tourName) {
+    if (tourPopup) {
+        tourPopup.style.display = 'flex'; // Show modal
+        
+        // Set the display text
+        document.getElementById('popupTourNameDisplay').textContent = tourName;
+        
+        // Set the hidden input value (This goes to Google Sheets 'vehicleType' column)
+        document.getElementById('popupTourNameInput').value = tourName;
+    }
+}
+
+// 2. Close Popup
+function closeTourPopup() {
+    if (tourPopup) {
+        tourPopup.style.display = 'none';
+    }
+}
+
+// Close if clicking outside the white box
+window.addEventListener('click', (e) => {
+    if (e.target === tourPopup) {
+        closeTourPopup();
+    }
+});
+
+// 3. Handle Form Submission
+if (popupForm) {
+    popupForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const submitBtn = popupForm.querySelector('.btn-submit');
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = 'Booking...';
+        submitBtn.disabled = true;
+
+        const formData = new FormData(popupForm);
+        
+        // YOUR GOOGLE SCRIPT URL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxH3I3Eal5HzzrKsE3zBR7ieaUIv1Qb63BhG-OE9OG_lWUynGgaCcFXRDe_E4EMpNzO-Q/exec';
+
+        fetch(scriptURL, { method: 'POST', body: formData })
+            .then(response => {
+                const successMsg = document.getElementById('popupSuccessMsg');
+                successMsg.hidden = false;
+                successMsg.textContent = `✓ Success! Booking for ${formData.get('vehicleType')} received.`;
+                
+                popupForm.reset();
+                
+                // Close popup automatically after 2 seconds
+                setTimeout(() => {
+                    successMsg.hidden = true;
+                    closeTourPopup();
+                }, 2000);
+            })
+            .catch(error => {
+                alert("Error! Please contact us directly.");
+                console.error('Error!', error.message);
+            })
+            .finally(() => {
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
+            });
+    });
+}
